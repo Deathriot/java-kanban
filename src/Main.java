@@ -29,7 +29,9 @@ public class Main {
         manager.updateSubTask(subTask1);
         manager.removeSubTask(subTask4.getId());
         System.out.println(testEpic.getStatus());
-
+        System.out.println(manager.getAnEpicSubTasks(testEpic));
+        manager.removeEpicTask(testEpic.getId());
+        System.out.println(manager.getAnEpicSubTasks(testEpic));
     }
 }
 
