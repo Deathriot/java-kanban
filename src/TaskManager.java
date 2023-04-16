@@ -43,7 +43,7 @@ public class TaskManager {
         }
 
         for (EpicTask epicTask : epicTasks.values()) {
-            epicTask.ClearSubTasksId();
+            epicTask.clearSubTasksId();
         }
     }
 

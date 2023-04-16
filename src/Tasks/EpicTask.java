@@ -16,7 +16,7 @@ public class EpicTask extends SimpleTask{
         this.subTasksId = subTasksId;
     }
 
-    public void ClearSubTasksId(){
+    public void clearSubTasksId(){
         subTasksId.clear();
         setStatus("NEW");
     }
