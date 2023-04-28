@@ -2,7 +2,7 @@ package Tasks;
 
 public class SubTask extends SimpleTask{
     private int epicId;
-    public SubTask(String title, String description, String status, EpicTask epicTask) {
+    public SubTask(String title, String description, Status status, EpicTask epicTask) {
         super(title, description,status);
         this.epicId = epicTask.getId();
     }

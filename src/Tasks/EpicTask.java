@@ -6,7 +6,7 @@ public class EpicTask extends SimpleTask{
     private ArrayList<Integer> subTasksId = new ArrayList<>();
 
     public EpicTask(String title, String description) {
-        super(title, description,"NEW");
+        super(title, description,Status.NEW);
     }
 
     public ArrayList<Integer> getSubTasksId() {
@@ -18,7 +18,7 @@ public class EpicTask extends SimpleTask{
 
     public void clearSubTasksId(){
         subTasksId.clear();
-        setStatus("NEW");
+        setStatus(Status.NEW);
     }
     public void addSubTaskId(int id){
         subTasksId.add(id);
