@@ -1,10 +1,11 @@
-import Tasks.SimpleTask;
+package Managers;
 
+import Tasks.SimpleTask;
 import java.util.ArrayList;
 
 public class InMemoryHistoryManager implements HistoryManager{
 
-    private ArrayList<SimpleTask> history = new ArrayList<>(10);
+    private final ArrayList<SimpleTask> history = new ArrayList<>(10);
     @Override
     public void addTask(SimpleTask task) {
         if(history.size() == 10){
@@ -16,6 +17,7 @@ public class InMemoryHistoryManager implements HistoryManager{
 
     @Override
     public ArrayList<SimpleTask> getHistory() {
-        return history;
+        ArrayList<SimpleTask> copiedHistory = history;
+        return copiedHistory;
     }
 }
