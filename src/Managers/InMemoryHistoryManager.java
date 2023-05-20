@@ -42,21 +42,20 @@ public class InMemoryHistoryManager implements HistoryManager{
         private Node tail;
         private int size = 0;
 
-        private void linkLast(SimpleTask task){
+        private Node linkLast(SimpleTask task){
             final Node oldTail = tail;
-            final Node newTail = new Node(oldTail, task, null);
+            final Node newNode = new Node(oldTail, task, null);
 
-            historyMap.put(task.getId(), newTail); //Не совсем уверен, что именно здесь должно вставляться в мапу
-
-            tail = newTail;
+            tail = newNode;
 
             if(oldTail == null){
-                head = newTail;
+                head = newNode;
             }else{
-                oldTail.next = newTail;
+                oldTail.next = newNode;
             }
 
             size++;
+            return newNode; // Не знаю как по-другому в addTask передать узел
         }
 
         private List<SimpleTask> getTasks(){
@@ -110,7 +109,8 @@ public class InMemoryHistoryManager implements HistoryManager{
             if(historyMap.containsKey(task.getId())) {
                 removeNode(historyMap.get(task.getId()));
             }
-            linkLast(task);
+            Node newNode = linkLast(task);
+            historyMap.put(task.getId(), newNode);
         }
 
         private void removeNodeById(int id){
