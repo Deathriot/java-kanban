@@ -2,6 +2,7 @@ package Tasks;
 
 public class SimpleTask{
 
+    protected TaskType type;
     private String title;
     private String description;
     private Status status;
@@ -10,6 +11,7 @@ public class SimpleTask{
         this.title = title;
         this.description = description;
         this.status = status;
+        type = TaskType.SIMPLETASK; // Пойдет?
     }
     public String getTitle() {
         return title;
@@ -45,6 +47,6 @@ public class SimpleTask{
 
     @Override
     public String toString() {
-        return title;
+        return id + "," + type + "," + title + "," + status + "," + description +",";
     }
 }

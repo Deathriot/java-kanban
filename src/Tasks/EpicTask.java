@@ -7,6 +7,7 @@ public class EpicTask extends SimpleTask{
 
     public EpicTask(String title, String description) {
         super(title, description,Status.NEW);
+        type = TaskType.EPICTASK;
     }
 
     public ArrayList<Integer> getSubTasksId() {

@@ -55,7 +55,7 @@ public class InMemoryHistoryManager implements HistoryManager{
             }
 
             size++;
-            return newNode; // Не знаю как по-другому в addTask передать узел
+            return newNode;
         }
 
         private List<SimpleTask> getTasks(){
