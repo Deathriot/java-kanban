@@ -16,8 +16,8 @@ public class SubTask extends SimpleTask{
     }
 
     @Override
-    public String toString(){
-        return super.toString() + epicId;
+    public String toString() {
+        return id + "," + type + "," + title + "," + status + "," + description +"," + epicId;
     }
 
 }

@@ -3,10 +3,10 @@ package Tasks;
 public class SimpleTask{
 
     protected TaskType type;
-    private String title;
-    private String description;
-    private Status status;
-    private int id;
+    protected String title;
+    protected String description;
+    protected Status status;
+    protected int id;
     public SimpleTask(String title, String description, Status status) {
         this.title = title;
         this.description = description;

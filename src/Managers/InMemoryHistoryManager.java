@@ -4,6 +4,7 @@ import Tasks.SimpleTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager{
 
@@ -23,10 +24,9 @@ public class InMemoryHistoryManager implements HistoryManager{
         history.removeNodeById(id);
     }
 
-    class CustomLinkedList{
-
-        private HashMap<Integer, Node> historyMap = new HashMap<>();
-        class Node {
+    private static class CustomLinkedList{
+        private final Map<Integer, Node> historyMap = new HashMap<>();
+       static class Node {
             public SimpleTask data;
             public Node next;
             public Node prev;

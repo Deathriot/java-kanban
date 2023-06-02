@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager{
-    private int nextId = 1;
+    protected int nextId = 1;
     protected final Map<Integer, SimpleTask> simpleTasks = new HashMap<>();
     protected final Map<Integer, EpicTask> epicTasks = new HashMap<>();
     protected final Map<Integer, SubTask> subTasks = new HashMap<>();
@@ -170,9 +170,10 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public List<SubTask> getAnEpicSubTasks(EpicTask task){
-        ArrayList<SubTask> epicsSubTasks = new ArrayList<>();
+        List<SubTask> epicsSubTasks = new ArrayList<>();
+        List <Integer> listSubTaskId = task.getSubTasksId();
 
-        for (Integer subTaskId : task.getSubTasksId()) {
+        for (Integer subTaskId : listSubTaskId) {
             epicsSubTasks.add(subTasks.get(subTaskId));
         }
         return epicsSubTasks;

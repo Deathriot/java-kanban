@@ -4,14 +4,12 @@ import ManagerExceptions.ManagerSaveException;
 import Tasks.*;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager{
-    File file;
-    final static String head = "id,type,name,status,description,epic"; // Так удобно, надеюсь так можно :)
+    private final File file;
+    private final static String HEAD = "id,type,name,status,description,epic"; // Так удобно, надеюсь так можно :)
 
     public FileBackedTasksManager(File file){
         this.file = file;
@@ -21,7 +19,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
         try(FileWriter writer = new FileWriter(file)){
 
-            writer.write(head);
+            writer.write(HEAD);
             writer.write("\n");
 
             for(SimpleTask task : simpleTasks.values()){
@@ -43,17 +41,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
             writer.write(historyToString(historyManager));
 
         }catch (IOException ex){
-            try{
-                throw new ManagerSaveException(); // Такое тз, ничего не знаю
-            }catch(ManagerSaveException saveEx){
-                System.out.println(saveEx.getMessage());
-            }
-
+            throw new ManagerSaveException();
         }
     }
 
    public static FileBackedTasksManager loadFromFile(File file){
         FileBackedTasksManager fileManager = new FileBackedTasksManager(file);
+        int currentId = 1;
 
         try(BufferedReader br = new BufferedReader(new FileReader(file))){
             
@@ -61,7 +55,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
                 String inputString = br.readLine();
 
-                if(inputString.equals(head)){ // Игнорируем первую строчку
+                if(inputString.equals(HEAD)){ // Игнорируем первую строчку
                     continue;
                 }
 
@@ -70,7 +64,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
                     List<Integer> historyId = historyFromString(StringHistory);
 
                     for(Integer id : historyId){
-                        if(fileManager.simpleTasks.containsKey(id)){ // не знаю как подругому, придется перебирать
+                        if(fileManager.simpleTasks.containsKey(id)){
                             fileManager.historyManager.addTask(fileManager.simpleTasks.get(id));
                         } else if(fileManager.subTasks.containsKey(id)){
                             fileManager.historyManager.addTask(fileManager.subTasks.get(id));
@@ -83,11 +77,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
                 SimpleTask task = fileManager.taskFromString(inputString);
 
-                if(task instanceof EpicTask){ // пусть instance of хоть где-то будет...
+                if(task instanceof EpicTask){
                     fileManager.epicTasks.put(task.getId(), (EpicTask) task);
+                    currentId++;
                 }else if(task instanceof SubTask){
+                    currentId++;
                     fileManager.subTasks.put(task.getId(), (SubTask) task);
+                    EpicTask epic = fileManager.epicTasks.get(((SubTask) task).getEpicId()); // Получаем эпик сабтаска
+                    epic.addSubTaskId(task.getId()); // Добавляем в него полученный сабтаск
                 }else{
+                    currentId++;
                     fileManager.simpleTasks.put(task.getId(), task);
                 }
 
@@ -98,6 +97,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
             System.out.println("Произошла ошибка!");
         }
 
+        fileManager.nextId = currentId; // восстанавливаем текущий свободный айдишник для будущих тасков
         return fileManager;
     }
     public static String historyToString(HistoryManager manager){
@@ -119,6 +119,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
     public static List<Integer> historyFromString(String value){
         List<Integer> history = new ArrayList<>();
+
+        if(value == null){
+            return history;
+        }
+
         String[] split = value.split(",");
 
         for(String id : split){

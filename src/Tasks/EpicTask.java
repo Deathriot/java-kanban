@@ -27,4 +27,9 @@ public class EpicTask extends SimpleTask{
     public void removeSubTask(Integer subTaskId){
         subTasksId.remove(subTaskId);
     }
+
+    @Override
+    public String toString() {
+        return id + "," + type + "," + title + "," + status + "," + description +",";
+    }
 }

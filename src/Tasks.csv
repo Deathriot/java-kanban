@@ -1,7 +1,9 @@
 id,type,name,status,description,epic
-1,SIMPLETASK,Task,NEW,just Task,
-2,SIMPLETASK,Task 2,NEW,just Task 2,
-3,EPICTASK,epic 1,NEW,just epic 1,
-4,SUBTASK,SubTask 1,NEW,just sub 2,3
+1,SIMPLETASK,Обычная задача,NEW,Что-то,
+2,SIMPLETASK,Еще одна просто задача,NEW,еще что-то,
+5,SIMPLETASK,simple,IN_PROGRESS,my id should be 5,
+3,EPICTASK,крутая задача,NEW,поспать,
+4,SUBTASK,Подзача спать,NEW,Спать сильно,3
+6,SUBTASK,Sub,NEW,my epic has 2 subs!,3
 
 1,3
