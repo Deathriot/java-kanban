@@ -11,6 +11,11 @@ public class InMemoryHistoryManager implements HistoryManager{
     private final CustomLinkedList history = new CustomLinkedList();
     @Override
     public void addTask(SimpleTask task) {
+
+        if(task == null){
+            return; // защита от null
+        }
+
         history.addTask(task);
     }
 

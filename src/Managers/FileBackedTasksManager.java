@@ -79,27 +79,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
                 if(task instanceof EpicTask){
                     fileManager.epicTasks.put(task.getId(), (EpicTask) task);
-                    currentId++;
+                    currentId = Math.max(currentId, task.getId());
                 }else if(task instanceof SubTask){
-                    currentId++;
+                    currentId = Math.max(currentId, task.getId());
                     fileManager.subTasks.put(task.getId(), (SubTask) task);
                     EpicTask epic = fileManager.epicTasks.get(((SubTask) task).getEpicId()); // Получаем эпик сабтаска
                     epic.addSubTaskId(task.getId()); // Добавляем в него полученный сабтаск
                 }else{
-                    currentId++;
+                    currentId = Math.max(currentId, task.getId());
                     fileManager.simpleTasks.put(task.getId(), task);
                 }
 
             }
-        }catch(FileNotFoundException ex){
-            System.out.println("Файл не найден!");
-       }catch (IOException ex){
-            System.out.println("Произошла ошибка!");
-        }
+        } catch(IOException ex){
+            ex.printStackTrace();
+       }
 
+        currentId++;
         fileManager.nextId = currentId; // восстанавливаем текущий свободный айдишник для будущих тасков
         return fileManager;
     }
+
     public static String historyToString(HistoryManager manager){
         List<SimpleTask> history = manager.getHistory();
 
