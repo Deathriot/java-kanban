@@ -6,10 +6,12 @@ import Tasks.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTasksManager extends InMemoryTaskManager{
     private final File file;
-    private final static String HEAD = "id,type,name,status,description,epic"; // Так удобно, надеюсь так можно :)
+    private final static String HEAD = "id,type,name,status,description,startTime,duration,epic";
 
     public FileBackedTasksManager(File file){
         this.file = file;
@@ -77,6 +79,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
                 SimpleTask task = fileManager.taskFromString(inputString);
 
+                // Вызывать публичные методы менеджера нельзя, тк он перезапишет файл и все сломается
                 if(task instanceof EpicTask){
                     fileManager.epicTasks.put(task.getId(), (EpicTask) task);
                     currentId = Math.max(currentId, task.getId());
@@ -85,6 +88,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
                     fileManager.subTasks.put(task.getId(), (SubTask) task);
                     EpicTask epic = fileManager.epicTasks.get(((SubTask) task).getEpicId()); // Получаем эпик сабтаска
                     epic.addSubTaskId(task.getId()); // Добавляем в него полученный сабтаск
+                    fileManager.setEpicStatus(epic); // Вручную меняем статус
+                    fileManager.setEpicTime(epic); // Вручную меняем время
                 }else{
                     currentId = Math.max(currentId, task.getId());
                     fileManager.simpleTasks.put(task.getId(), task);
@@ -92,7 +97,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
             }
         } catch(IOException ex){
-            ex.printStackTrace();
+            throw new ManagerSaveException();
        }
 
         currentId++;
@@ -141,9 +146,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         String name = split[2];
         Status status = Status.valueOf(split[3]);
         String description = split[4];
+        LocalDateTime startTime;
+
+        if(split[5].equals("null")){
+            startTime = null;
+        }else{
+            startTime = LocalDateTime.parse(split[5]);
+        }
+
+        Duration duration;
+
+        if(split[6].equals("null")){
+            duration = null;
+        }else{
+            duration = Duration.parse(split[6]);
+        }
 
         if(type.equals(TaskType.SIMPLETASK)){
-            SimpleTask simpleTask = new SimpleTask(name, description ,status);
+            SimpleTask simpleTask = new SimpleTask(name, description ,status, startTime, duration);
             simpleTask.setId(id);
             return simpleTask;
         }else if(type.equals(TaskType.EPICTASK)){
@@ -151,13 +171,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
             epicTask.setId(id);
             return epicTask;
         }else{
-            int epicId = Integer.parseInt(split[5]);
+            int epicId = Integer.parseInt(split[7]);
             EpicTask epic = epicTasks.get(epicId);
-            SubTask subTask = new SubTask(name, description, status, epic);
+            SubTask subTask = new SubTask(name, description, status, epic, startTime, duration);
             subTask.setId(id);
             return subTask;
         }
     }
+
     @Override
     public SimpleTask getSimpleTask(int taskId) {
         SimpleTask task = super.getSimpleTask(taskId);

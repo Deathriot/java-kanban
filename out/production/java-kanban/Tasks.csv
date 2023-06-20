@@ -1,9 +1,15 @@
-id,type,name,status,description,epic
-1,SIMPLETASK,Обычная задача,NEW,Что-то,
-2,SIMPLETASK,Еще одна просто задача,NEW,еще что-то,
-5,SIMPLETASK,simple,IN_PROGRESS,my id should be 5,
-3,EPICTASK,крутая задача,NEW,поспать,
-4,SUBTASK,Подзача спать,NEW,Спать сильно,3
-6,SUBTASK,Sub,NEW,my epic has 2 subs!,3
+id,type,name,status,description,startTime,duration,epic
+1,EPICTASK,epicName,NEW,epicDisc,null,null,
+2,EPICTASK,epicName,NEW,epicDisc,null,PT0S,
+5,EPICTASK,epicName,DONE,epicDisc,null,PT0S,
+8,EPICTASK,epicName,IN_PROGRESS,epicDisc,null,PT0S,
+11,EPICTASK,epicName,IN_PROGRESS,epicDisc,null,PT0S,
+3,SUBTASK,sub1,NEW,sub1Desc,null,null,2
+4,SUBTASK,sub2,NEW,sub2Desc,null,null,2
+6,SUBTASK,sub1,DONE,sub1Desc,null,null,5
+7,SUBTASK,sub2,DONE,sub2Desc,null,null,5
+9,SUBTASK,sub1,NEW,sub1Desc,null,null,8
+10,SUBTASK,sub2,DONE,sub2Desc,null,null,8
+12,SUBTASK,sub1,IN_PROGRESS,sub1Desc,null,null,11
+13,SUBTASK,sub2,IN_PROGRESS,sub2Desc,null,null,11
 
-1,3
