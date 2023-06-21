@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HistoryManagerTest {
-    HistoryManager manager;
-    SimpleTask testTask1;
-    SimpleTask testTask2;
-    SimpleTask testTask3;
+    private HistoryManager manager;
+    private SimpleTask testTask1;
+    private SimpleTask testTask2;
+    private SimpleTask testTask3;
 
     @BeforeEach
     public void create(){

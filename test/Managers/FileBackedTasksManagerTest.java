@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>{
 
+    private static final String ERROR_MESSAGE = "При сохранении файла произошла ошибка!";
     private final String path = "src\\TasksTest.csv";
     @BeforeEach
     public void createFileBackedManager(){
@@ -24,7 +25,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     }
 
     @Test
-    public void shouldBeNoTasks(){
+    public void shouldBeNoTasksWhenLoaded(){
         //менеджер уже создался
         manager.addSimpleTask(new SimpleTask("simple","simple1", Status.NEW,null, null));
         manager.removeSimpleTask(1);
@@ -57,7 +58,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     }
 
     @Test
-    public void LoadFromFileTest(){
+    public void loadFromFileTest(){
         EpicTask testEpic = new EpicTask("epic", "epic");
         manager.addEpicTask(testEpic);
         SubTask testSub = new SubTask("sub", "sub", Status.NEW, testEpic, null, null);
@@ -84,6 +85,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         ManagerSaveException ex =  assertThrows(ManagerSaveException.class,
                 ()-> FileBackedTasksManager.loadFromFile(new File(wrongPath)));
 
-        assertEquals("При сохранении файла произошла ошибка!", ex.getMessage());
+        assertEquals(ERROR_MESSAGE, ex.getMessage());
     }
 }
