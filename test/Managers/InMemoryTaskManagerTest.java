@@ -16,7 +16,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     }
 
     @Test
-    public void NewManagerShouldNoSaveTasks(){
+    public void newManagerShouldNoSaveTasks(){ //Раньше писал на шарпе - его отголоски все еще проявляются :)
         manager.addEpicTask(new EpicTask("epic", "epic"));
         manager.addSimpleTask(new SimpleTask("simple","simple", Status.NEW,null,null));
 
