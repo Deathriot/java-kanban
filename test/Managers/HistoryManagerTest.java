@@ -3,6 +3,7 @@ package Managers;
 import Tasks.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,26 +17,26 @@ public class HistoryManagerTest {
     private SimpleTask testTask3;
 
     @BeforeEach
-    public void create(){
+    public void create() {
         manager = new InMemoryHistoryManager();
         testTask1 = new SimpleTask("test1", "test1", Status.NEW, null, null);
         testTask1.setId(1);
         testTask2 = new EpicTask("test2", "test2");
         testTask2.setId(3);
-        testTask3 = new SubTask("test3", "test3", Status.NEW, (EpicTask) testTask2,
-                null,null);
+        testTask3 = new SubTask("test3", "test3", Status.NEW, testTask2.getId(),
+                null, null);
         testTask3.setId(4);
 
     }
 
     @Test
-    public void shouldBeEmptyHistory(){
-      List<SimpleTask> test =  manager.getHistory();
-      assertEquals(0, test.size());
+    public void shouldBeEmptyHistory() {
+        List<SimpleTask> test = manager.getHistory();
+        assertEquals(0, test.size());
     }
 
     @Test
-    public void shouldBeNoDuplicate(){
+    public void shouldBeNoDuplicate() {
 
         manager.addTask(testTask1);
         manager.addTask(testTask1);
@@ -59,7 +60,7 @@ public class HistoryManagerTest {
     }
 
     @Test
-    public void shouldRemoveTaskInBeginProperly(){
+    public void shouldRemoveTaskInBeginProperly() {
         manager.addTask(testTask1);
         manager.addTask(testTask2);
         manager.addTask(testTask3);
@@ -69,8 +70,8 @@ public class HistoryManagerTest {
 
         boolean hasRemovedTask = false;
 
-        for(SimpleTask task : manager.getHistory()){
-            if(testTask1 == task){
+        for (SimpleTask task : manager.getHistory()) {
+            if (testTask1 == task) {
                 hasRemovedTask = true;
             }
         }
@@ -79,7 +80,7 @@ public class HistoryManagerTest {
     }
 
     @Test
-    public void shouldRemoveTaskInMiddleProperly(){
+    public void shouldRemoveTaskInMiddleProperly() {
         manager.addTask(testTask1);
         manager.addTask(testTask2);
         manager.addTask(testTask3);
@@ -89,8 +90,8 @@ public class HistoryManagerTest {
 
         boolean hasRemovedTask = false;
 
-        for(SimpleTask task : manager.getHistory()){
-            if(testTask2 == task){
+        for (SimpleTask task : manager.getHistory()) {
+            if (testTask2 == task) {
                 hasRemovedTask = true;
             }
         }
@@ -99,7 +100,7 @@ public class HistoryManagerTest {
     }
 
     @Test
-    public void shouldRemoveTaskInEndProperly(){
+    public void shouldRemoveTaskInEndProperly() {
         manager.addTask(testTask1);
         manager.addTask(testTask2);
         manager.addTask(testTask3);
@@ -109,8 +110,8 @@ public class HistoryManagerTest {
 
         boolean hasRemovedTask = false;
 
-        for(SimpleTask task : manager.getHistory()){
-            if(testTask3 == task){
+        for (SimpleTask task : manager.getHistory()) {
+            if (testTask3 == task) {
                 hasRemovedTask = true;
             }
         }
@@ -119,7 +120,7 @@ public class HistoryManagerTest {
     }
 
     @Test
-    public void shouldSafeTasksInProperOrder(){
+    public void shouldSafeTasksInProperOrder() {
         manager.addTask(testTask1);
         manager.addTask(testTask2);
         manager.addTask(testTask3);

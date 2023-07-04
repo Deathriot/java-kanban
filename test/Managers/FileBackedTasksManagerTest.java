@@ -7,45 +7,47 @@ import Tasks.Status;
 import Tasks.SubTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>{
+public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
     private static final String ERROR_MESSAGE = "При сохранении файла произошла ошибка!";
     private final String path = "src\\TasksTest.csv";
+
     @BeforeEach
-    public void createFileBackedManager(){
+    public void createFileBackedManager() {
         manager = new FileBackedTasksManager(new File(path));
         manager.removeAllEpicTasks();
         manager.removeAllSimpleTasks();
     }
 
     @Test
-    public void shouldBeNoTasksWhenLoaded(){
+    public void shouldBeNoTasksWhenLoaded() {
         //менеджер уже создался
-        manager.addSimpleTask(new SimpleTask("simple","simple1", Status.NEW,null, null));
+        manager.addSimpleTask(new SimpleTask("simple", "simple1", Status.NEW, null, null));
         manager.removeSimpleTask(1);
         FileBackedTasksManager manager2 = FileBackedTasksManager.loadFromFile(new File(path));
         assertEquals(0, manager2.getAllSimpleTasks().size());
     }
 
     @Test
-    public void shouldLoadProperlyEpicWithNoSubs(){
+    public void shouldLoadProperlyEpicWithNoSubs() {
         EpicTask testEpic = new EpicTask("epic", "epic");
         manager.addEpicTask(testEpic);
 
         FileBackedTasksManager manager2 = FileBackedTasksManager.loadFromFile(new File(path));
 
         assertEquals(testEpic, manager2.getEpicTask(testEpic.getId()));
-        assertEquals(0, manager2.getAnEpicSubTasks(testEpic).size());
+        assertEquals(0, manager2.getAnEpicSubTasks(testEpic.getId()).size());
     }
 
     @Test
-    public void shouldLoadEmptyHistoryCorrectly(){
+    public void shouldLoadEmptyHistoryCorrectly() {
         EpicTask testEpic = new EpicTask("epic", "epic");
         manager.addEpicTask(testEpic);
         manager.getEpicTask(testEpic.getId());
@@ -58,10 +60,10 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     }
 
     @Test
-    public void loadFromFileTest(){
+    public void loadFromFileTest() {
         EpicTask testEpic = new EpicTask("epic", "epic");
         manager.addEpicTask(testEpic);
-        SubTask testSub = new SubTask("sub", "sub", Status.NEW, testEpic, null, null);
+        SubTask testSub = new SubTask("sub", "sub", Status.NEW, testEpic.getId(), null, null);
         SimpleTask testSimple = new SimpleTask("simple", "simple", Status.IN_PROGRESS,
                 LocalDateTime.now(), Duration.ofMinutes(100));
 
@@ -71,7 +73,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         FileBackedTasksManager manager2 = FileBackedTasksManager.loadFromFile(new File(path));
 
         assertEquals(testEpic, manager2.getEpicTask(testEpic.getId()));
-        assertEquals(testSub, manager2.getAnEpicSubTasks(testEpic).get(0));
+        assertEquals(testSub, manager2.getAnEpicSubTasks(testEpic.getId()).get(0));
         assertEquals(testSub, manager2.getSubTask(testSub.getId()));
         assertEquals(testSimple, manager2.getSimpleTask(testSimple.getId()));
 
@@ -79,11 +81,11 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     }
 
     @Test
-    public void shouldReturnCustomExWhenLoadError(){
+    public void shouldReturnCustomExWhenLoadError() {
         String wrongPath = "abcd";
 
-        ManagerSaveException ex =  assertThrows(ManagerSaveException.class,
-                ()-> FileBackedTasksManager.loadFromFile(new File(wrongPath)));
+        ManagerSaveException ex = assertThrows(ManagerSaveException.class,
+                () -> FileBackedTasksManager.loadFromFile(new File(wrongPath)));
 
         assertEquals(ERROR_MESSAGE, ex.getMessage());
     }

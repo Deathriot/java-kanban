@@ -7,15 +7,15 @@ public class Managers {
     private Managers(){
 
     }
-    public static TaskManager getDefault(){
-        return new InMemoryTaskManager();
+    public static HttpTaskManager getDefault(String uri){
+        return new HttpTaskManager(uri);
     }
 
     public static HistoryManager getDefaultHistory(){
         return new InMemoryHistoryManager();
     }
 
-    public static TaskManager getFileBacked(File file){
+    public static FileBackedTasksManager getFileBacked(File file){
         return FileBackedTasksManager.loadFromFile(file);
     }
 }

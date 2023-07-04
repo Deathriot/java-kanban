@@ -76,6 +76,10 @@ public class SimpleTask{
         this.id = id;
     }
 
+    public TaskType getType(){
+        return type;
+    }
+
     @Override
     public String toString() {
         return id + "," + type + "," + title + "," + status + "," + description +","

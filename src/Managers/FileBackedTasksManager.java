@@ -17,7 +17,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         this.file = file;
     }
 
-    private void save(){
+    protected void save(){
 
         try(FileWriter writer = new FileWriter(file)){
 
@@ -49,7 +49,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
    public static FileBackedTasksManager loadFromFile(File file){
         FileBackedTasksManager fileManager = new FileBackedTasksManager(file);
-        int currentId = 1;
+        int currentId = 0;
 
         try(BufferedReader br = new BufferedReader(new FileReader(file))){
             
@@ -173,7 +173,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         }else{
             int epicId = Integer.parseInt(split[7]);
             EpicTask epic = epicTasks.get(epicId);
-            SubTask subTask = new SubTask(name, description, status, epic, startTime, duration);
+            SubTask subTask = new SubTask(name, description, status, epic.getId(), startTime, duration);
             subTask.setId(id);
             return subTask;
         }

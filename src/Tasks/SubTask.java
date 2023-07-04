@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 
 public class SubTask extends SimpleTask{
     private int epicId;
-    public SubTask(String title, String description, Status status, EpicTask epicTask,
+    public SubTask(String title, String description, Status status, int epicId,
                    LocalDateTime startTime, Duration duration) {
         super(title, description,status, startTime, duration);
-        this.epicId = epicTask.getId();
+        this.epicId = epicId;
         type = TaskType.SUBTASK;
     }
 

@@ -1,34 +1,35 @@
 import Tasks.*;
 import Managers.*;
+import com.google.gson.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import Http.*;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 public class Main {
 
-    public static void main(String[] args){
-        String path = "src\\Tasks.csv"; //Относительный путь
-        File file = new File(path);
-        FileBackedTasksManager manager = new FileBackedTasksManager(file);
-        SimpleTask simple1 = new SimpleTask("test1", "test1", Status.DONE,
-                LocalDateTime.of(2000,10,10,10,10),
-                Duration.ofMinutes(30));
+    public static void main(String[] args) throws Exception{
+        Gson gson = new Gson();
+        new KVServer().start();
+        HttpTaskServer server = new HttpTaskServer();
+        server.start();
 
-        manager.addSimpleTask(simple1);
-
-        SimpleTask simple2 = new SimpleTask("test2", "test2", Status.NEW, null, null);
-
-        manager.addSimpleTask(simple2);
-
-        TaskManager manager2 = Managers.getFileBacked(file);
-        System.out.println(manager2.getAllSimpleTasks());
-
-        HistoryManager history = new InMemoryHistoryManager();
-        history.addTask(simple1);
-        history.addTask(simple2);
-        history.addTask(simple1);
-        System.out.println(history.getHistory());
+        EpicTask epic = new EpicTask("i am correct!", "and YOU are broken!");
+        System.out.println(gson.toJson(epic));
     }
 }
 

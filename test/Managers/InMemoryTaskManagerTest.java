@@ -9,16 +9,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager>{
+public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     @BeforeEach
-    public void createInMemoryManager(){
+    public void createInMemoryManager() {
         manager = new InMemoryTaskManager();
     }
 
     @Test
-    public void newManagerShouldNoSaveTasks(){ //Раньше писал на шарпе - его отголоски все еще проявляются :)
+    public void newManagerShouldNoSaveTasks() {
         manager.addEpicTask(new EpicTask("epic", "epic"));
-        manager.addSimpleTask(new SimpleTask("simple","simple", Status.NEW,null,null));
+        manager.addSimpleTask(new SimpleTask("simple", "simple", Status.NEW, null, null));
 
         InMemoryTaskManager manager2 = new InMemoryTaskManager();
         String erorrMessage = "Новый менеджер задач не пустой";

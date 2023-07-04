@@ -117,6 +117,8 @@ public class InMemoryTaskManager implements TaskManager{
             return;
         }
 
+        validateTaskByType(task, TaskType.SIMPLETASK);
+
         task.setId(nextId);
         validateTaskByTime(task);
         nextId++;
@@ -128,6 +130,8 @@ public class InMemoryTaskManager implements TaskManager{
             return;
         }
 
+        validateTaskByType(task, TaskType.EPICTASK);
+
         task.setId(nextId);
         nextId++;
         epicTasks.put(task.getId(),task);
@@ -137,6 +141,8 @@ public class InMemoryTaskManager implements TaskManager{
         if(task == null){
             return;
         }
+
+        validateTaskByType(task, TaskType.SUBTASK);
 
         EpicTask epic = epicTasks.get(task.getEpicId());
 
@@ -157,6 +163,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void updateSimpleTask(SimpleTask task){
         if(simpleTasks.containsKey(task.getId())){
+            validateTaskByType(task, TaskType.SIMPLETASK);
             validateTaskByTime(task);
             simpleTasks.put(task.getId(), task);
         }
@@ -164,6 +171,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void updateEpicTask(EpicTask task){
         if(epicTasks.containsKey(task.getId())){
+            validateTaskByType(task, TaskType.EPICTASK);
             EpicTask epic = epicTasks.get(task.getId());
             List<Integer> subIdList = epic.getSubTasksId();
             task.addAllSubTasksId(subIdList);
@@ -178,6 +186,7 @@ public class InMemoryTaskManager implements TaskManager{
             return;
         }
 
+        validateTaskByType(task, TaskType.SUBTASK);
         validateTaskByTime(task);
         subTasks.put(task.getId(), task);
 
@@ -220,9 +229,10 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public List<SubTask> getAnEpicSubTasks(EpicTask task){
+    public List<SubTask> getAnEpicSubTasks(int epicId){
         List<SubTask> epicsSubTasks = new ArrayList<>();
-        List <Integer> listSubTaskId = task.getSubTasksId();
+        EpicTask epic = epicTasks.get(epicId);
+        List <Integer> listSubTaskId = epic.getSubTasksId();
 
         for (Integer subTaskId : listSubTaskId) {
             epicsSubTasks.add(subTasks.get(subTaskId));
@@ -342,5 +352,11 @@ public class InMemoryTaskManager implements TaskManager{
         }
 
         prioritizedTasks.add(testTask); //Кажется целесообразным добавлять задачу здесь же
+    }
+
+    private void validateTaskByType(SimpleTask task, TaskType correctType){
+        if(!task.getType().equals(correctType)){
+            throw new TaskTypeValidationException(task.getType(), correctType);
+        }
     }
 }
