@@ -10,11 +10,15 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class FileBackedTasksManager extends InMemoryTaskManager{
-    private final File file;
+    private File file;
     private final static String HEAD = "id,type,name,status,description,startTime,duration,epic";
 
     public FileBackedTasksManager(File file){
         this.file = file;
+    }
+
+    protected FileBackedTasksManager(){
+
     }
 
     protected void save(){
@@ -84,15 +88,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
                     fileManager.epicTasks.put(task.getId(), (EpicTask) task);
                     currentId = Math.max(currentId, task.getId());
                 }else if(task instanceof SubTask){
+                    SubTask subtask = (SubTask) task;
                     currentId = Math.max(currentId, task.getId());
-                    fileManager.subTasks.put(task.getId(), (SubTask) task);
+                    fileManager.subTasks.put(task.getId(), subtask);
                     EpicTask epic = fileManager.epicTasks.get(((SubTask) task).getEpicId()); // Получаем эпик сабтаска
                     epic.addSubTaskId(task.getId()); // Добавляем в него полученный сабтаск
-                    fileManager.setEpicStatus(epic); // Вручную меняем статус
-                    fileManager.setEpicTime(epic); // Вручную меняем время
+                    fileManager.setEpic(epic);
+                    fileManager.prioritizedTasks.add(subtask);
                 }else{
                     currentId = Math.max(currentId, task.getId());
                     fileManager.simpleTasks.put(task.getId(), task);
+                    fileManager.prioritizedTasks.add(task);
                 }
 
             }

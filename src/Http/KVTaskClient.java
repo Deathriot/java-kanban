@@ -27,7 +27,7 @@ public class KVTaskClient {
             try {
                 Long.parseLong(response.body());
             } catch (NumberFormatException exception) {
-                throw new IOException(); // Проверка на то что при регистрации должно выдаваться число - токен
+                throw new KVServerRegisterException(); // Проверка на то что при регистрации должно выдаваться число - токен
             }
             APIToken += response.body();
 
@@ -45,11 +45,11 @@ public class KVTaskClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
-                throw new IOException();
+                throw new KVServerSaveException("Код ответа не совпадает с ожидаемым - " + response.statusCode());
             }
 
         } catch (IOException | InterruptedException exception) {
-            throw new KVServerSaveException();
+            throw new KVServerSaveException("При сохранении произошла ошибка");
         }
     }
 

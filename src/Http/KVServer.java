@@ -49,6 +49,13 @@ public class KVServer {
             }
 
             String value = data.get(key);
+
+            if(value == null){
+                System.out.println("Данные не найдены");
+                h.sendResponseHeaders(404,0);
+                return;
+            }
+
             sendText(h, value);
 
         } finally {

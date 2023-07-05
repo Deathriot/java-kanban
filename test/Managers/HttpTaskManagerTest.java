@@ -39,7 +39,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
         kvServer.start();
         server = new HttpTaskServer();
         server.start();
-        manager = Managers.getDefault(KVSERVER_URI);
+        manager = Managers.getDefault(KVSERVER_URI, false);
         client = HttpClient.newHttpClient();
 
         //Так намного проще тестировать все эндпоинты
@@ -341,7 +341,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
         manager.getSubTask(testSub.getId());
         List<SimpleTask> history = manager.getHistory();
 
-        HttpTaskManager newManager = HttpTaskManager.loadData();
+        HttpTaskManager newManager = Managers.getDefault(KVSERVER_URI, true);
 
         assertEquals(history, newManager.getHistory());
         assertEquals(testSimple, newManager.getSimpleTask(testSimple.getId()));

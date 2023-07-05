@@ -7,7 +7,10 @@ public class Managers {
     private Managers(){
 
     }
-    public static HttpTaskManager getDefault(String uri){
+    public static HttpTaskManager getDefault(String uri, boolean shouldBeLoaded){
+        if(shouldBeLoaded){
+            return HttpTaskManager.loadData();
+        }
         return new HttpTaskManager(uri);
     }
 

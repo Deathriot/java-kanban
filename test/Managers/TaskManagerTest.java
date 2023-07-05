@@ -437,10 +437,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertDoesNotThrow(() -> manager.addSimpleTask(testSimple3),
                 "Валидатор должен пропускать задачи без заданного времени");
 
-        testSimple3.setStartTime(LocalDateTime.of(2100, 10, 10, 10, 10));
-        testSimple3.setDuration(Duration.ofMinutes(200));
+        SimpleTask testSimple4 = new SimpleTask("simple4", "simple4",
+                Status.NEW,LocalDateTime.of(2100, 10, 10, 10, 10), Duration.ofMinutes(200));
 
-        assertDoesNotThrow(() -> manager.addSimpleTask(testSimple3),
+        assertDoesNotThrow(() -> manager.addSimpleTask(testSimple4),
                 "Валидатор должен пропускать задачи если они не пересекаются");
     }
 

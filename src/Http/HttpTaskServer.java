@@ -6,7 +6,6 @@ import TaskValidatorExceptions.TaskTypeValidationException;
 import Tasks.*;
 
 import java.io.OutputStream;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -23,10 +22,14 @@ import java.net.InetSocketAddress;
 public class HttpTaskServer {
     private static final int PORT = 8080;
     private static final String START_URI = "/tasks/"; // с этого начинаются все запросы
+    private static final String POST = "POST";
+    private static final String GET = "GET";
+    private static final String DELETE = "DELETE";
     private final HttpTaskManager manager;
     private final HttpServer server;
     private final Gson gson;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+
 
     public HttpTaskServer() throws IOException {
         GsonBuilder builder = new GsonBuilder().serializeNulls();
@@ -34,15 +37,13 @@ public class HttpTaskServer {
 
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/tasks", this::manage);
-        manager = Managers.getDefault("http://localhost:8081/register");
+        manager = Managers.getDefault("http://localhost:8081/register", false);
     }
 
     private EndPoint getEndpoint(String uri, String method) {
-        final String post = "POST";
-        final String get = "GET";
-        final String delete = "DELETE";
 
-        if (!method.equals(post) && !method.equals(get) && !method.equals(delete)) {
+
+        if (!method.equals(POST) && !method.equals(GET) && !method.equals(DELETE)) {
             return EndPoint.WRONG_METHOD; // Так проще ловить все ошибки и обрабатывать их
         }
 
@@ -52,7 +53,7 @@ public class HttpTaskServer {
 
         final String requestUri = uri.substring(START_URI.length()); // оставляем только нужную часть
 
-        if (method.equals(get)) {
+        if (method.equals(GET)) {
             switch (requestUri) {
                 case "":
                     return EndPoint.GET_ALL_TASKS;
@@ -80,7 +81,7 @@ public class HttpTaskServer {
             }
         }
 
-        if (method.equals(post)) {
+        if (method.equals(POST)) {
             switch (requestUri) {
                 case "task/":
                     return EndPoint.POST_ADD_SIMPLE;
@@ -102,7 +103,7 @@ public class HttpTaskServer {
             }
         }
 
-        if (method.equals(delete)) {
+        if (method.equals(DELETE)) {
             switch (requestUri) {
                 case "task/":
                     return EndPoint.DELETE_ALL_SIMPLE;
@@ -132,7 +133,6 @@ public class HttpTaskServer {
         String uri = exchange.getRequestURI().getPath() + exchange.getRequestURI().getQuery();
 
         if (uri.contains("null")) {
-            // У меня все сломалось и я три часа все чинил, пожалуйста, не заставляйте меня переделывать эту проверку((
             sb.append(uri);
             sb.delete(sb.indexOf("null"), sb.length());
             uri = sb.toString();
@@ -420,6 +420,8 @@ public class HttpTaskServer {
         exchange.sendResponseHeaders(statusCode, 0);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(responseBody.getBytes(DEFAULT_CHARSET));
+        }finally {
+            exchange.close();
         }
     }
 

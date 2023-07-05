@@ -4,18 +4,16 @@ import Http.KVTaskClient;
 import com.google.gson.*;
 import Tasks.*;
 
-import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HttpTaskManager extends FileBackedTasksManager {
     private final KVTaskClient kVClient;
-    private final static Gson gson = new GsonBuilder().serializeNulls().create();
-    private final static String key = "httpTaskManager";
+    private final static Gson GSON = new GsonBuilder().serializeNulls().create();
+    private final static String KEY = "httpTaskManager";
 
     public HttpTaskManager(String uri) {
-        super(new File("src\\Tasks.scv"));
         kVClient = new KVTaskClient(URI.create(uri));
     }
 
@@ -24,19 +22,19 @@ public class HttpTaskManager extends FileBackedTasksManager {
         final StringBuilder sb = new StringBuilder();
 
         for (SimpleTask simple : simpleTasks.values()) {
-            String stringSimple = gson.toJson(simple);
+            String stringSimple = GSON.toJson(simple);
             sb.append(stringSimple);
             sb.append("\n");
         }
 
         for (EpicTask epic : epicTasks.values()) {
-            String stringEpic = gson.toJson(epic);
+            String stringEpic = GSON.toJson(epic);
             sb.append(stringEpic);
             sb.append("\n");
         }
 
         for (SubTask sub : subTasks.values()) {
-            String stringSub = gson.toJson(sub);
+            String stringSub = GSON.toJson(sub);
             sb.append(stringSub);
             sb.append("\n");
         }
@@ -46,15 +44,15 @@ public class HttpTaskManager extends FileBackedTasksManager {
             tasksId.add(task.getId());
         }
 
-        String stringHistory = gson.toJson(tasksId);
+        String stringHistory = GSON.toJson(tasksId);
         sb.append(stringHistory);
 
-        kVClient.put(key, sb.toString());
+        kVClient.put(KEY, sb.toString());
     }
 
     public static HttpTaskManager loadData() {
         HttpTaskManager manager = new HttpTaskManager("http://localhost:8081/register");
-        String json = manager.kVClient.load(key);
+        String json = manager.kVClient.load(KEY);
         int currentNextId = 0;
 
         String[] splitJson = json.split("\r?\n");
@@ -63,22 +61,23 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonObject task = JsonParser.parseString(splitJson[i]).getAsJsonObject();
 
             if ((task.get("type")).getAsString().equals("SIMPLETASK")) {
-                SimpleTask simple = gson.fromJson(task, SimpleTask.class);
+                SimpleTask simple = GSON.fromJson(task, SimpleTask.class);
                 manager.simpleTasks.put(simple.getId(), simple);
+                manager.prioritizedTasks.add(simple);
                 currentNextId = Math.max(currentNextId, simple.getId());
 
             } else if ((task.get("type")).getAsString().equals("EPICTASK")) {
-                EpicTask epic = gson.fromJson(task, EpicTask.class);
+                EpicTask epic = GSON.fromJson(task, EpicTask.class);
                 manager.epicTasks.put(epic.getId(), epic);
                 currentNextId = Math.max(currentNextId, epic.getId());
 
             } else {
-                SubTask sub = gson.fromJson(task, SubTask.class);
+                SubTask sub = GSON.fromJson(task, SubTask.class);
                 manager.subTasks.put(sub.getId(), sub);
                 EpicTask epic = manager.epicTasks.get(sub.getEpicId());
                 epic.addSubTaskId(sub.getId());
-                manager.setEpicStatus(epic);
-                manager.setEpicTime(epic);
+                manager.setEpic(epic);
+                manager.prioritizedTasks.add(sub);
                 currentNextId = Math.max(currentNextId, sub.getId());
             }
         }
